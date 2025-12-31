@@ -8,8 +8,11 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-blue.svg)](https://www.typescriptlang.org/)
 [![Material Design](https://img.shields.io/badge/Material-Design-orange.svg)](https://material.angular.io/)
 [![License](https://img.shields.io/badge/License-Private-lightgrey.svg)]()
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-black.svg)](https://github.com/ltisistemas/ReloFlow-Web)
 
 [English](#-relowflow-web) | [Português](#-relowflow-web-1)
+
+**Repository**: [https://github.com/ltisistemas/ReloFlow-Web](https://github.com/ltisistemas/ReloFlow-Web)
 
 </div>
 
@@ -129,7 +132,7 @@ yarn --version  # Should be >= 1.22.0
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/ltisistemas/ReloFlow-Web.git
 cd RelowFlow-Web
 ```
 
@@ -491,7 +494,7 @@ This project is proprietary and confidential.
 
 **Built with ❤️ using Angular**
 
-[Report Bug](https://github.com/your-repo/issues) · [Request Feature](https://github.com/your-repo/issues)
+[Report Bug](https://github.com/ltisistemas/ReloFlow-Web/issues) · [Request Feature](https://github.com/ltisistemas/ReloFlow-Web/issues) · [View Repository](https://github.com/ltisistemas/ReloFlow-Web)
 
 </div>
 
@@ -622,7 +625,7 @@ yarn --version  # Deve ser >= 1.22.0
 ### 1. Clonar o Repositório
 
 ```bash
-git clone <url-do-repositório>
+git clone https://github.com/ltisistemas/ReloFlow-Web.git
 cd RelowFlow-Web
 ```
 
@@ -984,6 +987,6 @@ Este projeto é proprietário e confidencial.
 
 **Construído com ❤️ usando Angular**
 
-[Reportar Bug](https://github.com/seu-repo/issues) · [Solicitar Funcionalidade](https://github.com/seu-repo/issues)
+[Reportar Bug](https://github.com/ltisistemas/ReloFlow-Web/issues) · [Solicitar Funcionalidade](https://github.com/ltisistemas/ReloFlow-Web/issues) · [Ver Repositório](https://github.com/ltisistemas/ReloFlow-Web)
 
 </div>

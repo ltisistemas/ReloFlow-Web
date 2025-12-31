@@ -4,7 +4,14 @@ const fs = require('fs');
 const path = require('path');
 
 // Determinar o tipo de build baseado na branch ou variável de ambiente
-const branch = process.env.GITHUB_REF_NAME || process.env.BRANCH || 'develop';
+// No GitHub Actions, GITHUB_REF_NAME está disponível, mas também podemos usar GITHUB_REF
+let branch = process.env.GITHUB_REF_NAME || process.env.BRANCH;
+if (!branch && process.env.GITHUB_REF) {
+  // Extrair nome da branch de refs/heads/branch-name
+  branch = process.env.GITHUB_REF.replace(/^refs\/heads\//, '');
+}
+branch = branch || 'develop';
+
 const isMain = branch === 'main' || process.env.BUILD_TYPE === 'main';
 const isDevelop = branch === 'develop' || process.env.BUILD_TYPE === 'develop';
 
@@ -54,10 +61,12 @@ fs.writeFileSync(versionPath, JSON.stringify({
     buildType: isMain ? 'production' : isDevelop ? 'development' : 'feature'
 }, null, 2) + '\n');
 
-console.log(`Version set to: ${version}`);
-console.log(`Build type: ${isMain ? 'production' : isDevelop ? 'development' : 'feature'}`);
-console.log(`Branch: ${branch}`);
+// Logs vão para stderr para não interferir com a captura da versão
+console.error(`Version set to: ${version}`);
+console.error(`Build type: ${isMain ? 'production' : isDevelop ? 'development' : 'feature'}`);
+console.error(`Branch: ${branch}`);
 
-// Exportar para uso em outros scripts
+// Exportar apenas a versão para stdout (para captura em scripts/workflows)
+// Sem quebra de linha para evitar problemas na captura
 process.stdout.write(version);
 
