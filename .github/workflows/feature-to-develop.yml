@@ -9,7 +9,11 @@ jobs:
   test-and-build:
     name: Test, Build and Create PR
     runs-on: ubuntu-latest
-    
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      checks: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -42,7 +46,7 @@ jobs:
           BUILD_TYPE: develop
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist-${{ steps.version.outputs.version }}
           path: dist/
