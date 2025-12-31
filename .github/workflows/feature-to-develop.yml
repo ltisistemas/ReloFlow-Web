@@ -9,7 +9,11 @@ jobs:
   test-and-build:
     name: Test, Build and Create PR
     runs-on: ubuntu-latest
-    
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      checks: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
