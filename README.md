@@ -10,6 +10,10 @@
 [![License](https://img.shields.io/badge/License-Private-lightgrey.svg)]()
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-black.svg)](https://github.com/ltisistemas/ReloFlow-Web)
 
+[![Feature to Develop](https://github.com/ltisistemas/ReloFlow-Web/actions/workflows/feature-to-develop.yml/badge.svg)](https://github.com/ltisistemas/ReloFlow-Web/actions/workflows/feature-to-develop.yml)
+[![Develop to Main](https://github.com/ltisistemas/ReloFlow-Web/actions/workflows/develop-to-main.yml/badge.svg)](https://github.com/ltisistemas/ReloFlow-Web/actions/workflows/develop-to-main.yml)
+[![Hotfix to Main](https://github.com/ltisistemas/ReloFlow-Web/actions/workflows/hotfix-to-main.yml/badge.svg)](https://github.com/ltisistemas/ReloFlow-Web/actions/workflows/hotfix-to-main.yml)
+
 [English](#-relowflow-web) | [Português](#-relowflow-web-1)
 
 **Repository**: [https://github.com/ltisistemas/ReloFlow-Web](https://github.com/ltisistemas/ReloFlow-Web)

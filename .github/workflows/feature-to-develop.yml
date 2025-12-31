@@ -110,22 +110,50 @@ jobs:
             });
             console.log(`PR #${pr.number} criado com sucesso: ${pr.html_url}`);
 
-      - name: Create Release
+      - name: Create or Update Release
         uses: actions/github-script@v7
         with:
           script: |
             const version = '${{ steps.version.outputs.version }}';
             const branchName = '${{ steps.branch.outputs.branch_name }}';
+            const tagName = `v${version}`;
             
-            const { data: release } = await github.rest.repos.createRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tag_name: `v${version}`,
-              name: `Release ${version} - ${branchName}`,
-              body: `## Release ${version}\n\n**Branch:** ${branchName}\n**Base:** develop\n**Tipo:** Feature Build\n\n### Artifacts\n\nBuild artifacts estão disponíveis na action: \`dist-${version}\`\n\n### Download\n\nOs artifacts podem ser baixados na página da action ou através da API do GitHub.\n\n---\n\n*Release criada automaticamente pelo GitHub Actions.*`,
-              draft: false,
-              prerelease: true
-            });
-            
-            console.log(`Release ${version} criada: ${release.html_url}`);
+            try {
+              // Verificar se a release já existe
+              const { data: existingRelease } = await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag: tagName
+              });
+              
+              // Se existe, atualizar
+              const { data: release } = await github.rest.repos.updateRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: existingRelease.id,
+                name: `Release ${version} - ${branchName}`,
+                body: `## Release ${version}\n\n**Branch:** ${branchName}\n**Base:** develop\n**Tipo:** Feature Build\n\n### Artifacts\n\nBuild artifacts estão disponíveis na action: \`dist-${version}\`\n\n### Download\n\nOs artifacts podem ser baixados na página da action ou através da API do GitHub.\n\n---\n\n*Release atualizada automaticamente pelo GitHub Actions.*`,
+                draft: false,
+                prerelease: true
+              });
+              
+              console.log(`Release ${version} atualizada: ${release.html_url}`);
+            } catch (error) {
+              // Se não existe (404), criar nova
+              if (error.status === 404) {
+                const { data: release } = await github.rest.repos.createRelease({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  tag_name: tagName,
+                  name: `Release ${version} - ${branchName}`,
+                  body: `## Release ${version}\n\n**Branch:** ${branchName}\n**Base:** develop\n**Tipo:** Feature Build\n\n### Artifacts\n\nBuild artifacts estão disponíveis na action: \`dist-${version}\`\n\n### Download\n\nOs artifacts podem ser baixados na página da action ou através da API do GitHub.\n\n---\n\n*Release criada automaticamente pelo GitHub Actions.*`,
+                  draft: false,
+                  prerelease: true
+                });
+                
+                console.log(`Release ${version} criada: ${release.html_url}`);
+              } else {
+                throw error;
+              }
+            }
 

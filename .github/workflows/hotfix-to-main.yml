@@ -110,22 +110,50 @@ jobs:
             });
             console.log(`PR #${pr.number} criado com sucesso: ${pr.html_url}`);
 
-      - name: Create Release
+      - name: Create or Update Release
         uses: actions/github-script@v7
         with:
           script: |
             const version = '${{ steps.version.outputs.version }}';
             const branchName = '${{ steps.branch.outputs.branch_name }}';
+            const tagName = `v${version}`;
             
-            const { data: release } = await github.rest.repos.createRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tag_name: `v${version}`,
-              name: `Hotfix Release ${version} - ${branchName}`,
-              body: `## Hotfix Release ${version}\n\n**Branch:** ${branchName}\n**Base:** main\n**Tipo:** Hotfix Build\n\n### Status\n\n✅ Testes executados\n✅ Build realizado\n✅ Artifacts disponíveis\n\n### Artifacts\n\nBuild artifacts estão disponíveis na action: \`dist-${version}\`\n\n⚠️ **Hotfix** - Esta é uma correção urgente para produção.\n\n---\n\n*Release criada automaticamente pelo GitHub Actions.*`,
-              draft: false,
-              prerelease: false
-            });
-            
-            console.log(`Release ${version} criada: ${release.html_url}`);
+            try {
+              // Verificar se a release já existe
+              const { data: existingRelease } = await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag: tagName
+              });
+              
+              // Se existe, atualizar
+              const { data: release } = await github.rest.repos.updateRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: existingRelease.id,
+                name: `Hotfix Release ${version} - ${branchName}`,
+                body: `## Hotfix Release ${version}\n\n**Branch:** ${branchName}\n**Base:** main\n**Tipo:** Hotfix Build\n\n### Status\n\n✅ Testes executados\n✅ Build realizado\n✅ Artifacts disponíveis\n\n### Artifacts\n\nBuild artifacts estão disponíveis na action: \`dist-${version}\`\n\n⚠️ **Hotfix** - Esta é uma correção urgente para produção.\n\n---\n\n*Release atualizada automaticamente pelo GitHub Actions.*`,
+                draft: false,
+                prerelease: false
+              });
+              
+              console.log(`Release ${version} atualizada: ${release.html_url}`);
+            } catch (error) {
+              // Se não existe (404), criar nova
+              if (error.status === 404) {
+                const { data: release } = await github.rest.repos.createRelease({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  tag_name: tagName,
+                  name: `Hotfix Release ${version} - ${branchName}`,
+                  body: `## Hotfix Release ${version}\n\n**Branch:** ${branchName}\n**Base:** main\n**Tipo:** Hotfix Build\n\n### Status\n\n✅ Testes executados\n✅ Build realizado\n✅ Artifacts disponíveis\n\n### Artifacts\n\nBuild artifacts estão disponíveis na action: \`dist-${version}\`\n\n⚠️ **Hotfix** - Esta é uma correção urgente para produção.\n\n---\n\n*Release criada automaticamente pelo GitHub Actions.*`,
+                  draft: false,
+                  prerelease: false
+                });
+                
+                console.log(`Release ${version} criada: ${release.html_url}`);
+              } else {
+                throw error;
+              }
+            }
 
