@@ -1,0 +1,117 @@
+<div class="create-lead-dialog">
+  <h2 mat-dialog-title>Criar Novo Lead</h2>
+  
+  <mat-dialog-content>
+    <form [formGroup]="leadForm" class="lead-form">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Nome do Lead</mat-label>
+        <input matInput type="text" formControlName="name" placeholder="Ex: Família Silva" />
+        <mat-icon matPrefix>person</mat-icon>
+        @if (name?.invalid && name?.touched) {
+          <mat-error>
+            @if (name?.errors?.['required']) {
+              Nome é obrigatório
+            } @else if (name?.errors?.['minlength']) {
+              Nome deve ter no mínimo 3 caracteres
+            }
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Descrição</mat-label>
+        <textarea 
+          matInput 
+          formControlName="description" 
+          placeholder="Descreva o lead..."
+          rows="3"
+        ></textarea>
+        <mat-icon matPrefix>description</mat-icon>
+        @if (description?.invalid && description?.touched) {
+          <mat-error>
+            @if (description?.errors?.['required']) {
+              Descrição é obrigatória
+            } @else if (description?.errors?.['minlength']) {
+              Descrição deve ter no mínimo 5 caracteres
+            }
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Valor</mat-label>
+          <input matInput type="number" formControlName="amount" placeholder="0.00" />
+          <mat-icon matPrefix>attach_money</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Moeda</mat-label>
+          <input matInput type="text" formControlName="currency" placeholder="EUR" />
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Endereço</mat-label>
+        <input matInput type="text" formControlName="streetAddress" placeholder="Rua, Avenida, etc." />
+        <mat-icon matPrefix>location_on</mat-icon>
+      </mat-form-field>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Número</mat-label>
+          <input matInput type="text" formControlName="streetAddressNumber" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>CEP</mat-label>
+          <input matInput type="text" formControlName="zipCode" placeholder="12345-678" />
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Complemento</mat-label>
+        <input matInput type="text" formControlName="streetAddressComplement" placeholder="Apto, Bloco, etc." />
+      </mat-form-field>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Cidade</mat-label>
+          <input matInput type="text" formControlName="city" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Estado</mat-label>
+          <input matInput type="text" formControlName="state" />
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>País</mat-label>
+        <input matInput type="text" formControlName="country" />
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()" [disabled]="isLoading">
+      Cancelar
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="onSubmit()"
+      [disabled]="isLoading || leadForm.invalid"
+    >
+      @if (isLoading) {
+        <ng-container>
+          <mat-icon class="spinning">refresh</mat-icon>
+          <span>Criando...</span>
+        </ng-container>
+      } @else {
+        Criar Lead
+      }
+    </button>
+  </mat-dialog-actions>
+</div>
+

@@ -1,0 +1,112 @@
+<div class="company-users">
+  <div class="section-header">
+    <h3>Usuários da Empresa</h3>
+    <p>Gerencie os usuários associados à empresa</p>
+  </div>
+
+  <div class="users-section">
+    <div class="users-header">
+      <h4>Usuários Associados</h4>
+      <button mat-raised-button color="primary" (click)="openAddUserDialog()" [disabled]="isSaving">
+        <mat-icon>add</mat-icon>
+        <span>Adicionar Usuário</span>
+      </button>
+    </div>
+
+    @if (pendingUsers.length > 0) {
+      <div class="pending-users-actions">
+        <button
+          mat-raised-button
+          color="accent"
+          (click)="onSaveUsers()"
+          [disabled]="isSaving"
+        >
+          @if (isSaving) {
+            <ng-container>
+              <mat-icon class="spinning">refresh</mat-icon>
+              <span>Salvando...</span>
+            </ng-container>
+          } @else {
+            <ng-container>
+              <mat-icon>save</mat-icon>
+              <span>Salvar Usuários ({{ pendingUsers.length }})</span>
+            </ng-container>
+          }
+        </button>
+      </div>
+    }
+
+    @if (isLoading) {
+      <div class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Carregando usuários...</p>
+      </div>
+    } @else if (getAllUsers().length === 0) {
+      <div class="empty-state">
+        <mat-icon>people_outline</mat-icon>
+        <p>Nenhum usuário associado</p>
+      </div>
+    } @else {
+      <table mat-table [dataSource]="usersDataSource" class="users-table">
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>Email</th>
+          <td mat-cell *matCellDef="let user">{{ getUserEmail(user) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Nome</th>
+          <td mat-cell *matCellDef="let user">{{ getUserName(user) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef>Tipo</th>
+          <td mat-cell *matCellDef="let user">
+            <mat-chip>{{ getUserType(user) }}</mat-chip>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let user">
+            @if (isPending(user)) {
+              <mat-chip color="warn">Pendente</mat-chip>
+            } @else {
+              <mat-chip color="primary">Associado</mat-chip>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Ações</th>
+          <td mat-cell *matCellDef="let user; let i = index">
+            @if (isPending(user)) {
+              <button
+                mat-icon-button
+                color="warn"
+                (click)="onRemovePendingUser(i)"
+                [disabled]="isSaving"
+                matTooltip="Remover"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            } @else {
+              <button
+                mat-icon-button
+                color="warn"
+                (click)="onDeleteUser(getUserId(user))"
+                [disabled]="isSaving"
+                matTooltip="Remover da Empresa"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    }
+  </div>
+</div>
+

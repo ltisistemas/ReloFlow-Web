@@ -1,0 +1,64 @@
+<div class="create-company-dialog">
+  <h2 mat-dialog-title>Criar Nova Empresa</h2>
+  
+  <mat-dialog-content>
+    <form [formGroup]="companyForm" class="company-form">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Nome da Empresa</mat-label>
+        <input matInput type="text" formControlName="name" placeholder="Ex: Europei Solutions" />
+        <mat-icon matPrefix>business</mat-icon>
+        @if (name?.invalid && name?.touched) {
+          <mat-error>
+            @if (name?.errors?.['required']) {
+              Nome é obrigatório
+            } @else if (name?.errors?.['minlength']) {
+              Nome deve ter no mínimo 3 caracteres
+            }
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Descrição</mat-label>
+        <textarea 
+          matInput 
+          formControlName="description" 
+          placeholder="Descreva a empresa..."
+          rows="4"
+        ></textarea>
+        <mat-icon matPrefix>description</mat-icon>
+        @if (description?.invalid && description?.touched) {
+          <mat-error>
+            @if (description?.errors?.['required']) {
+              Descrição é obrigatória
+            } @else if (description?.errors?.['minlength']) {
+              Descrição deve ter no mínimo 5 caracteres
+            }
+          </mat-error>
+        }
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()" [disabled]="isLoading">
+      Cancelar
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="onSubmit()"
+      [disabled]="isLoading || companyForm.invalid"
+    >
+      @if (isLoading) {
+        <ng-container>
+          <mat-icon class="spinning">refresh</mat-icon>
+          <span>Criando...</span>
+        </ng-container>
+      } @else {
+        Criar Empresa
+      }
+    </button>
+  </mat-dialog-actions>
+</div>
+

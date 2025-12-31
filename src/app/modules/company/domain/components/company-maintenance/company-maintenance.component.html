@@ -1,0 +1,102 @@
+<div class="company-maintenance">
+  @if (isLoading) {
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Carregando dados da empresa...</p>
+    </div>
+  } @else if (company) {
+    <div class="maintenance-header">
+      <h2>{{ company.name }}</h2>
+      <p class="company-description">{{ company.description }}</p>
+    </div>
+
+    <mat-tab-group>
+      <!-- Aba Dados da Empresa -->
+      <mat-tab label="Dados da Empresa">
+        <div class="tab-content">
+          <form [formGroup]="companyForm" class="company-form">
+            <div class="form-section">
+              <h3>Informações Básicas</h3>
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Nome da Empresa</mat-label>
+                  <input matInput type="text" formControlName="name" />
+                  <mat-icon matPrefix>business</mat-icon>
+                  @if (name?.invalid && name?.touched) {
+                    <mat-error>
+                      @if (name?.errors?.['required']) {
+                        Nome é obrigatório
+                      } @else if (name?.errors?.['minlength']) {
+                        Nome deve ter no mínimo 3 caracteres
+                      }
+                    </mat-error>
+                  }
+                </mat-form-field>
+              </div>
+
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Descrição</mat-label>
+                  <textarea matInput formControlName="description" rows="4"></textarea>
+                  <mat-icon matPrefix>description</mat-icon>
+                  @if (description?.invalid && description?.touched) {
+                    <mat-error>
+                      @if (description?.errors?.['required']) {
+                        Descrição é obrigatória
+                      } @else if (description?.errors?.['minlength']) {
+                        Descrição deve ter no mínimo 5 caracteres
+                      }
+                    </mat-error>
+                  }
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="onSaveCompany()"
+                [disabled]="isSaving || companyForm.invalid"
+              >
+                @if (isSaving) {
+                  <ng-container>
+                    <mat-icon class="spinning">refresh</mat-icon>
+                    <span>Salvando...</span>
+                  </ng-container>
+                } @else {
+                  <ng-container>
+                    <mat-icon>save</mat-icon>
+                    <span>Salvar Alterações</span>
+                  </ng-container>
+                }
+              </button>
+            </div>
+          </form>
+        </div>
+      </mat-tab>
+
+      <!-- Aba Documentos -->
+      <mat-tab label="Documentos">
+        <div class="tab-content">
+          <app-document-templates [company]="company!"></app-document-templates>
+        </div>
+      </mat-tab>
+
+      <!-- Aba Usuários -->
+      <mat-tab label="Usuários">
+        <div class="tab-content">
+          <app-company-users [company]="company!"></app-company-users>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  } @else {
+    <div class="empty-state">
+      <mat-icon>business</mat-icon>
+      <h3>Nenhuma empresa selecionada</h3>
+      <p>Selecione uma empresa para gerenciar</p>
+    </div>
+  }
+</div>
+
+

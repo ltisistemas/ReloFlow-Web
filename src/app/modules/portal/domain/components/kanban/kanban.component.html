@@ -1,0 +1,100 @@
+<div class="kanban-container">
+  @if (isLoading) {
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Carregando Kanban...</p>
+    </div>
+  } @else if (columns.length === 0) {
+    <div class="empty-state">
+      <mat-icon>view_kanban</mat-icon>
+      <h3>Nenhuma posição encontrada</h3>
+      <p>Configure posições para a empresa para visualizar o Kanban</p>
+    </div>
+  } @else {
+    <div class="kanban-board" cdkDropListGroup>
+      @for (column of columns; track column.position.id) {
+        <div class="kanban-column">
+          <div class="column-header">
+            <h3>{{ column.position.name }}</h3>
+            <span class="lead-count">{{ column.leads.length }}</span>
+          </div>
+          
+          @if (isCaptacaoLeadColumn(column.position.name)) {
+            <div class="column-actions">
+              <button 
+                mat-raised-button 
+                color="primary" 
+                class="add-lead-button"
+                (click)="openCreateLeadDialog(column.position)"
+              >
+                <mat-icon>add</mat-icon>
+                <span>Adicionar Lead</span>
+              </button>
+            </div>
+          }
+          
+          <div 
+            cdkDropList 
+            [cdkDropListData]="column.leads"
+            [cdkDropListConnectedTo]="getConnectedLists()"
+            (cdkDropListDropped)="onDrop($event)"
+            [id]="'column-' + column.position.id"
+            class="column-content"
+          >
+            @for (lead of column.leads; track lead.id) {
+              <div 
+                cdkDrag 
+                (cdkDragStarted)="onDragStarted()"
+                (cdkDragEnded)="isDragging = false"
+                class="lead-card"
+              >
+                <mat-card class="lead-card-content" (click)="openLeadDetailDialog(lead)">
+                  <div class="drag-handle" cdkDragHandle>
+                    <mat-icon>drag_indicator</mat-icon>
+                  </div>
+                  <mat-card-header>
+                    <mat-card-title>{{ lead.name }}</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    @if (lead.description) {
+                      <p class="lead-description">{{ lead.description }}</p>
+                    }
+                    @if (lead.amount) {
+                      <div class="lead-amount">
+                        <mat-icon>attach_money</mat-icon>
+                        <span>{{ lead.amount }} {{ lead.currency }}</span>
+                      </div>
+                    }
+                    @if (lead.members && lead.members.length > 0) {
+                      <div class="lead-members">
+                        <mat-icon>people</mat-icon>
+                        <span>{{ lead.members.length }} membro(s)</span>
+                      </div>
+                    }
+                  </mat-card-content>
+                </mat-card>
+                <ng-container *cdkDragPreview>
+                  <div class="lead-card-preview">
+                    {{ lead.name }}
+                  </div>
+                </ng-container>
+                <ng-container *cdkDragPlaceholder>
+                  <div class="lead-card-placeholder">
+                    <div class="placeholder-content"></div>
+                  </div>
+                </ng-container>
+              </div>
+            }
+            @if (column.leads.length === 0) {
+              <div class="empty-column">
+                <mat-icon>inbox</mat-icon>
+                <p>Sem leads</p>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+

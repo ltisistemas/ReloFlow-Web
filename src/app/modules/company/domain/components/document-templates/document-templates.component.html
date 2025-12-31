@@ -1,0 +1,173 @@
+<div class="document-templates">
+  <div class="section-header">
+    <h3>Templates de Documentos por Position</h3>
+    <p>Gerencie os documentos necessários para cada etapa do processo</p>
+  </div>
+
+  @if (positions.length === 0) {
+    <div class="empty-state">
+      <mat-icon>description</mat-icon>
+      <p>Nenhuma position encontrada</p>
+    </div>
+  } @else {
+    <div class="position-selector">
+      <mat-form-field appearance="outline">
+        <mat-label>Selecione a Position</mat-label>
+        <mat-select [(ngModel)]="selectedPosition" (selectionChange)="onPositionChange()">
+          @for (position of positions; track position.id) {
+            <mat-option [value]="position">{{ position.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    @if (selectedPosition) {
+      <div class="templates-section">
+        <div class="templates-header">
+          <h4>Templates para: {{ selectedPosition.name }}</h4>
+          <button mat-raised-button color="primary" (click)="openAddForm()" [disabled]="isSaving">
+            <mat-icon>add</mat-icon>
+            <span>Adicionar Template</span>
+          </button>
+        </div>
+
+        @if (showAddForm) {
+          <mat-card class="template-form-card">
+            <mat-card-header>
+              <mat-card-title>{{ editingTemplate ? 'Editar Template' : 'Novo Template' }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <form [formGroup]="templateForm" class="template-form">
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>Nome do Documento</mat-label>
+                    <input matInput formControlName="name" />
+                    <mat-icon matPrefix>description</mat-icon>
+                    @if (templateForm.get('name')?.invalid && templateForm.get('name')?.touched) {
+                      <mat-error>Nome é obrigatório (mínimo 3 caracteres)</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>Tipo de Documento</mat-label>
+                    <mat-select formControlName="documentType">
+                      @for (type of documentTypes; track type) {
+                        <mat-option [value]="type">{{ type }}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>Destino</mat-label>
+                    <mat-select formControlName="targetType">
+                      @for (target of targetTypes; track target.value) {
+                        <mat-option [value]="target.value">{{ target.label }}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+
+                  <div class="checkbox-field">
+                    <mat-checkbox formControlName="isRequired">Documento obrigatório</mat-checkbox>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button mat-button type="button" (click)="cancelForm()" [disabled]="isSaving">
+                    Cancelar
+                  </button>
+                  <button mat-raised-button color="primary" (click)="onSaveTemplate()" [disabled]="isSaving || templateForm.invalid">
+                    @if (isSaving) {
+                      <ng-container>
+                        <mat-icon class="spinning">refresh</mat-icon>
+                        <span>Salvando...</span>
+                      </ng-container>
+                    } @else {
+                      <ng-container>
+                        <mat-icon>save</mat-icon>
+                        <span>Salvar</span>
+                      </ng-container>
+                    }
+                  </button>
+                </div>
+              </form>
+            </mat-card-content>
+          </mat-card>
+        }
+
+        @if (isLoading) {
+          <div class="loading-container">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Carregando templates...</p>
+          </div>
+        } @else if (templates.length === 0) {
+          <div class="empty-state">
+            <mat-icon>inbox</mat-icon>
+            <p>Nenhum template cadastrado para esta position</p>
+          </div>
+        } @else {
+          <table mat-table [dataSource]="templatesDataSource" class="templates-table">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Nome</th>
+              <td mat-cell *matCellDef="let template">{{ template.name }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="documentType">
+              <th mat-header-cell *matHeaderCellDef>Tipo</th>
+              <td mat-cell *matCellDef="let template">
+                <mat-chip>{{ template.documentType }}</mat-chip>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="targetType">
+              <th mat-header-cell *matHeaderCellDef>Destino</th>
+              <td mat-cell *matCellDef="let template">
+                <mat-chip>{{ getTargetTypeLabel(template.targetType) }}</mat-chip>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="isRequired">
+              <th mat-header-cell *matHeaderCellDef>Obrigatório</th>
+              <td mat-cell *matCellDef="let template">
+                @if (template.isRequired) {
+                  <mat-chip color="warn">Sim</mat-chip>
+                } @else {
+                  <mat-chip>Não</mat-chip>
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Ações</th>
+              <td mat-cell *matCellDef="let template">
+                <button
+                  mat-icon-button
+                  color="primary"
+                  (click)="openEditForm(template)"
+                  [disabled]="isSaving"
+                  matTooltip="Editar"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="onDeleteTemplate(template)"
+                  [disabled]="isSaving"
+                  matTooltip="Excluir"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        }
+      </div>
+    }
+  }
+</div>
+

@@ -1,0 +1,252 @@
+<div class="lead-detail-dialog">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>{{ lead?.name || 'Carregando...' }}</h2>
+    <button mat-icon-button (click)="onClose()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Carregando dados do lead...</p>
+    </div>
+  } @else if (lead) {
+    <mat-dialog-content class="dialog-content">
+      <mat-tab-group>
+        <!-- Aba Dados Cadastrais -->
+        <mat-tab label="Dados Cadastrais">
+          <div class="tab-content">
+            <form [formGroup]="leadForm" class="lead-form">
+              <div class="form-section">
+                <h3>Informações Básicas</h3>
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Nome do Lead</mat-label>
+                    <input matInput type="text" formControlName="name" />
+                    <mat-icon matPrefix>person</mat-icon>
+                    @if (name?.invalid && name?.touched) {
+                      <mat-error>
+                        @if (name?.errors?.['required']) {
+                          Nome é obrigatório
+                        } @else if (name?.errors?.['minlength']) {
+                          Nome deve ter no mínimo 3 caracteres
+                        }
+                      </mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Descrição</mat-label>
+                  <textarea 
+                    matInput 
+                    formControlName="description" 
+                    rows="4"
+                  ></textarea>
+                  <mat-icon matPrefix>description</mat-icon>
+                  @if (description?.invalid && description?.touched) {
+                    <mat-error>
+                      @if (description?.errors?.['required']) {
+                        Descrição é obrigatória
+                      } @else if (description?.errors?.['minlength']) {
+                        Descrição deve ter no mínimo 5 caracteres
+                      }
+                    </mat-error>
+                  }
+                </mat-form-field>
+
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>Valor</mat-label>
+                    <input matInput type="number" formControlName="amount" />
+                    <mat-icon matPrefix>attach_money</mat-icon>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>Moeda</mat-label>
+                    <input matInput type="text" formControlName="currency" />
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3>Endereço</h3>
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Endereço</mat-label>
+                  <input matInput type="text" formControlName="streetAddress" />
+                  <mat-icon matPrefix>location_on</mat-icon>
+                </mat-form-field>
+
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>Número</mat-label>
+                    <input matInput type="text" formControlName="streetAddressNumber" />
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>CEP</mat-label>
+                    <input matInput type="text" formControlName="zipCode" />
+                  </mat-form-field>
+                </div>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Complemento</mat-label>
+                  <input matInput type="text" formControlName="streetAddressComplement" />
+                </mat-form-field>
+
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>Cidade</mat-label>
+                    <input matInput type="text" formControlName="city" />
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>Estado</mat-label>
+                    <input matInput type="text" formControlName="state" />
+                  </mat-form-field>
+                </div>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>País</mat-label>
+                  <input matInput type="text" formControlName="country" />
+                </mat-form-field>
+              </div>
+
+              <div class="form-actions">
+                <button 
+                  mat-raised-button 
+                  color="primary" 
+                  (click)="onSaveLead()"
+                  [disabled]="isSaving || leadForm.invalid"
+                >
+                  @if (isSaving) {
+                    <ng-container>
+                      <mat-icon class="spinning">refresh</mat-icon>
+                      <span>Salvando...</span>
+                    </ng-container>
+                  } @else {
+                    <ng-container>
+                      <mat-icon>save</mat-icon>
+                      <span>Salvar Alterações</span>
+                    </ng-container>
+                  }
+                </button>
+              </div>
+            </form>
+          </div>
+        </mat-tab>
+
+        <!-- Aba Membros -->
+        <mat-tab label="Membros">
+          <div class="tab-content">
+            <div class="members-section">
+              <div class="members-header">
+                <h3>Membros do Lead</h3>
+                <div class="header-actions">
+                  <button mat-raised-button color="primary" (click)="onAddMember()" [disabled]="isSaving">
+                    <mat-icon>add</mat-icon>
+                    <span>Adicionar Membro</span>
+                  </button>
+                  @if (pendingMembers.length > 0) {
+                    <button 
+                      mat-raised-button 
+                      color="accent" 
+                      (click)="onSaveMembers()" 
+                      [disabled]="isSaving"
+                    >
+                      @if (isSaving) {
+                        <ng-container>
+                          <mat-icon class="spinning">refresh</mat-icon>
+                          <span>Salvando...</span>
+                        </ng-container>
+                      } @else {
+                        <ng-container>
+                          <mat-icon>save</mat-icon>
+                          <span>Salvar Membros ({{ pendingMembers.length }})</span>
+                        </ng-container>
+                      }
+                    </button>
+                  }
+                </div>
+              </div>
+
+              @if (isLoadingMembers) {
+                <div class="loading-container">
+                  <mat-spinner diameter="40"></mat-spinner>
+                  <p>Carregando membros...</p>
+                </div>
+              } @else if (getAllMembers().length === 0) {
+                <div class="empty-state">
+                  <mat-icon>people_outline</mat-icon>
+                  <p>Nenhum membro cadastrado</p>
+                </div>
+              } @else {
+                <table mat-table [dataSource]="membersDataSource" class="members-table">
+                  <ng-container matColumnDef="email">
+                    <th mat-header-cell *matHeaderCellDef>Email</th>
+                    <td mat-cell *matCellDef="let member">{{ getMemberEmail(member) }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef>Nome</th>
+                    <td mat-cell *matCellDef="let member">{{ getMemberName(member) }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef>Tipo</th>
+                    <td mat-cell *matCellDef="let member">
+                      <mat-chip>{{ getMemberType(member) }}</mat-chip>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef>Status</th>
+                    <td mat-cell *matCellDef="let member">
+                      @if (isPending(member)) {
+                        <mat-chip color="warn">Pendente</mat-chip>
+                      } @else {
+                        <mat-chip color="primary">Salvo</mat-chip>
+                      }
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Ações</th>
+                    <td mat-cell *matCellDef="let member; let i = index">
+                      @if (isPending(member)) {
+                        <button 
+                          mat-icon-button 
+                          color="warn" 
+                          (click)="onRemovePendingMember(i)" 
+                          [disabled]="isSaving"
+                          matTooltip="Remover"
+                        >
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      } @else {
+                        <button 
+                          mat-icon-button 
+                          color="warn" 
+                          (click)="onDeleteMember(getMemberId(member))" 
+                          [disabled]="isSaving"
+                          matTooltip="Excluir"
+                        >
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      }
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+              }
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-dialog-content>
+  }
+</div>
+

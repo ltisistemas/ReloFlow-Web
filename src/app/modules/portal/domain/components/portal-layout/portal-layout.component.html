@@ -1,0 +1,73 @@
+<div class="portal-layout">
+  <app-header (menuToggle)="toggleSidebar()"></app-header>
+  
+  <div class="layout-container" [class.sidebar-expanded]="sidebarExpanded">
+    <aside class="sidebar" [class.expanded]="sidebarExpanded">
+      <nav class="sidebar-nav">
+        <a 
+          mat-list-item 
+          class="sidebar-item"
+          (click)="onSidebarItemClick('leads')"
+          [matTooltip]="sidebarExpanded ? '' : 'Leads'"
+          matTooltipPosition="right"
+        >
+          <mat-icon matListItemIcon>people</mat-icon>
+          @if (sidebarExpanded) {
+            <span matListItemTitle>Leads</span>
+          }
+        </a>
+        <a 
+          mat-list-item 
+          class="sidebar-item"
+          (click)="onSidebarItemClick('dashboard')"
+          [matTooltip]="sidebarExpanded ? '' : 'Dashboard'"
+          matTooltipPosition="right"
+        >
+          <mat-icon matListItemIcon>dashboard</mat-icon>
+          @if (sidebarExpanded) {
+            <span matListItemTitle>Dashboard</span>
+          }
+        </a>
+        <a 
+          mat-list-item 
+          class="sidebar-item"
+          (click)="onSidebarItemClick('companies')"
+          [matTooltip]="sidebarExpanded ? '' : 'Empresas'"
+          matTooltipPosition="right"
+        >
+          <mat-icon matListItemIcon>business</mat-icon>
+          @if (sidebarExpanded) {
+            <span matListItemTitle>Empresas</span>
+          }
+        </a>
+        <a 
+          mat-list-item 
+          class="sidebar-item create-company"
+          (click)="onSidebarItemClick('create-company')"
+          [matTooltip]="sidebarExpanded ? '' : 'Criar Empresa'"
+          matTooltipPosition="right"
+        >
+          <mat-icon matListItemIcon>add_business</mat-icon>
+          @if (sidebarExpanded) {
+            <span matListItemTitle>Criar Empresa</span>
+          }
+        </a>
+      </nav>
+    </aside>
+    
+    <main class="portal-content">
+      @if (currentMode === 'company') {
+        @if (currentView === 'kanban') {
+          <app-kanban></app-kanban>
+        } @else if (currentView === 'dashboard') {
+          <app-dashboard></app-dashboard>
+        } @else if (currentView === 'company-maintenance') {
+          <app-company-maintenance></app-company-maintenance>
+        }
+      } @else {
+        <app-user-mode></app-user-mode>
+      }
+    </main>
+  </div>
+</div>
+

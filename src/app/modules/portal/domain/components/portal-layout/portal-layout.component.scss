@@ -1,0 +1,122 @@
+.portal-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--bg-secondary);
+}
+
+.layout-container {
+  display: flex;
+  margin-top: 64px;
+  min-height: calc(100vh - 64px);
+  position: relative;
+}
+
+.sidebar {
+  width: 64px;
+  background-color: var(--toolbar-bg);
+  border-right: 1px solid var(--border-color);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  position: fixed;
+  left: 0;
+  top: 64px;
+  height: calc(100vh - 64px);
+  z-index: 100;
+  box-shadow: 2px 0 4px var(--shadow);
+
+  &.expanded {
+    width: 240px;
+  }
+
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0;
+    height: 100%;
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      border-left: 3px solid transparent;
+      min-height: 48px;
+      width: 100%;
+
+      &:hover {
+        background-color: var(--bg-secondary);
+        border-left-color: var(--accent-primary);
+      }
+
+      &.create-company {
+        margin-top: auto;
+        border-top: 1px solid var(--border-color);
+        padding-top: 1rem;
+        
+        mat-icon {
+          color: var(--accent-primary);
+        }
+      }
+
+      mat-icon {
+        margin-right: 1rem;
+        flex-shrink: 0;
+        width: 24px;
+        height: 24px;
+        font-size: 24px;
+      }
+
+      span {
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.2s ease 0.1s;
+        flex: 1;
+      }
+    }
+  }
+
+  &.expanded .sidebar-nav .sidebar-item span {
+    opacity: 1;
+  }
+}
+
+.portal-content {
+  flex: 1;
+  padding: 1.5rem;
+  margin-left: 64px;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: calc(100vh - 64px);
+}
+
+.layout-container.sidebar-expanded .portal-content {
+  margin-left: 240px;
+}
+
+// Mobile-first: ajustes para telas maiores
+@media (min-width: 768px) {
+  .portal-content {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .sidebar {
+    position: fixed;
+    left: -240px;
+    width: 240px;
+    
+    &.expanded {
+      left: 0;
+      box-shadow: 4px 0 8px var(--shadow);
+    }
+  }
+
+  .portal-content {
+    margin-left: 0;
+  }
+}
+

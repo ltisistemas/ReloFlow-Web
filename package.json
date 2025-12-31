@@ -1,10 +1,13 @@
 {
   "name": "relow-flow-web",
-  "version": "0.0.0",
+  "version": "0.0.0-dev.2025-12-31T12-39-30",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "prebuild": "node scripts/version.js",
     "build": "ng build",
+    "build:main": "BUILD_TYPE=main node scripts/version.js && ng build",
+    "build:develop": "BUILD_TYPE=develop node scripts/version.js && ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:RelowFlow-Web": "node dist/relow-flow-web/server/server.mjs"
@@ -12,10 +15,12 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^18.2.0",
+    "@angular/cdk": "18.2.14",
     "@angular/common": "^18.2.0",
     "@angular/compiler": "^18.2.0",
     "@angular/core": "^18.2.0",
     "@angular/forms": "^18.2.0",
+    "@angular/material": "18.2.14",
     "@angular/platform-browser": "^18.2.0",
     "@angular/platform-browser-dynamic": "^18.2.0",
     "@angular/platform-server": "^18.2.0",

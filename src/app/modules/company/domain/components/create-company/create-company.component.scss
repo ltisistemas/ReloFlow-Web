@@ -1,0 +1,37 @@
+.create-company-dialog {
+  min-width: 400px;
+  max-width: 500px;
+}
+
+.company-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Mobile-first: ajustes para telas menores
+@media (max-width: 600px) {
+  .create-company-dialog {
+    min-width: 100%;
+    max-width: 100%;
+  }
+}
+

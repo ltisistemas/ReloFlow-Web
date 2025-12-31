@@ -32,9 +32,15 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "version.json",
+                "input": "src",
+                "output": "/"
               }
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/cyan-orange.css",
               "src/styles.scss"
             ],
             "scripts": [],
@@ -54,8 +60,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
-                  "maximumError": "4kB"
+                  "maximumWarning": "4kB",
+                  "maximumError": "6kB"
                 }
               ],
               "outputHashing": "all"
@@ -75,7 +81,8 @@
               "buildTarget": "RelowFlow-Web:build:production"
             },
             "development": {
-              "buildTarget": "RelowFlow-Web:build:development"
+              "buildTarget": "RelowFlow-Web:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
@@ -96,12 +103,28 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "version.json",
+                "input": "src",
+                "output": "/"
               }
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/cyan-orange.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "codeCoverage": true,
+            "codeCoverageExclude": [
+              "**/*.spec.ts",
+              "**/*.module.ts",
+              "**/index.ts",
+              "**/*.interface.ts",
+              "**/main.ts",
+              "**/polyfills.ts",
+              "**/environments/**"
+            ],
           }
         }
       }

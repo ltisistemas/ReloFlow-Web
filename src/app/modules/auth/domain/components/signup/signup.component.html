@@ -1,0 +1,140 @@
+<div class="signup-container">
+  <mat-card class="signup-card">
+    <mat-card-header>
+      <mat-card-title class="signup-title">ReloFlow</mat-card-title>
+      <mat-card-subtitle>Crie sua conta</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="signup-form">
+        <div class="name-row">
+          <mat-form-field appearance="outline" class="name-field">
+            <mat-label>Nome</mat-label>
+            <input matInput type="text" formControlName="firstName" placeholder="João" />
+            <mat-icon matPrefix>person</mat-icon>
+            @if (firstName?.invalid && firstName?.touched) {
+              <mat-error>
+                @if (firstName?.errors?.['required']) {
+                  Nome é obrigatório
+                } @else if (firstName?.errors?.['minlength']) {
+                  Nome deve ter no mínimo 2 caracteres
+                }
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="name-field">
+            <mat-label>Sobrenome</mat-label>
+            <input matInput type="text" formControlName="lastName" placeholder="Silva" />
+            @if (lastName?.invalid && lastName?.touched) {
+              <mat-error>
+                @if (lastName?.errors?.['required']) {
+                  Sobrenome é obrigatório
+                } @else if (lastName?.errors?.['minlength']) {
+                  Sobrenome deve ter no mínimo 2 caracteres
+                }
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" placeholder="usuario@example.com" />
+          <mat-icon matPrefix>email</mat-icon>
+          @if (email?.invalid && email?.touched) {
+            <mat-error>
+              @if (email?.errors?.['required']) {
+                Email é obrigatório
+              } @else if (email?.errors?.['email']) {
+                Email inválido
+              }
+            </mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Senha</mat-label>
+          <input 
+            matInput 
+            [type]="hidePassword ? 'password' : 'text'" 
+            formControlName="password" 
+            placeholder="Mínimo 6 caracteres" 
+          />
+          <mat-icon matPrefix>lock</mat-icon>
+          <button 
+            mat-icon-button 
+            matSuffix 
+            type="button"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="'Mostrar senha'"
+            [attr.aria-pressed]="hidePassword"
+          >
+            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          @if (password?.invalid && password?.touched) {
+            <mat-error>
+              @if (password?.errors?.['required']) {
+                Senha é obrigatória
+              } @else if (password?.errors?.['minlength']) {
+                Senha deve ter no mínimo 6 caracteres
+              }
+            </mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Confirmar Senha</mat-label>
+          <input 
+            matInput 
+            [type]="hideConfirmPassword ? 'password' : 'text'" 
+            formControlName="confirmPassword" 
+            placeholder="Digite a senha novamente" 
+          />
+          <mat-icon matPrefix>lock_outline</mat-icon>
+          <button 
+            mat-icon-button 
+            matSuffix 
+            type="button"
+            (click)="toggleConfirmPasswordVisibility()"
+            [attr.aria-label]="'Mostrar senha de confirmação'"
+            [attr.aria-pressed]="hideConfirmPassword"
+          >
+            <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          @if ((confirmPassword?.invalid && confirmPassword?.touched) || passwordMismatch) {
+            <mat-error>
+              @if (confirmPassword?.errors?.['required']) {
+                Confirmação de senha é obrigatória
+              } @else if (passwordMismatch) {
+                As senhas não coincidem
+              }
+            </mat-error>
+          }
+        </mat-form-field>
+
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit" 
+          class="full-width signup-button"
+          [disabled]="isLoading"
+        >
+          @if (isLoading) {
+            <ng-container>
+              <mat-icon class="spinning">refresh</mat-icon>
+              <span>Cadastrando...</span>
+            </ng-container>
+          } @else {
+            Cadastrar
+          }
+        </button>
+      </form>
+    </mat-card-content>
+
+    <mat-card-footer class="signup-footer">
+      <p>Já tem uma conta? <a routerLink="/auth/login">Faça login</a></p>
+    </mat-card-footer>
+  </mat-card>
+</div>
+
